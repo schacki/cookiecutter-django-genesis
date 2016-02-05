@@ -12,8 +12,10 @@ virtualenv:
 		virtualenv env --python=python3
 		env/bin/pip install --upgrade pip
 
+
 install:
 		env/bin/pip install -r requirements/development.txt
+		bower install
 
 
 migrate:

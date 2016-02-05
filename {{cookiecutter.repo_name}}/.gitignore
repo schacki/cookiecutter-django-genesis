@@ -46,20 +46,13 @@ htmlcov
 *.swp
 *.swo
 
-# npm
-node_modules/
-
 # Compass
 .sass-cache
 
-# virtual environments
-.env
+# project bootstrap artefacts
+env
+var
+etc
+bower_modules
+node_modules
 
-# User-uploaded media
-{{ cookiecutter.repo_name }}/media/
-
-# Hitch directory
-tests/.hitch
-
-# MailHog binary
-mailhog
