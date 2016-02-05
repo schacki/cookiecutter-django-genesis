@@ -7,7 +7,6 @@
     "domain_name": "example.com",
     "version": "0.1.0",
     "timezone": "UTC",
-    "now": "2016/02/04",
-    "year": "{{ cookiecutter.now[:4] }}",
-    "database": "Your database (postgres, mysql, sqlite)"
+    "now": "2015/11/04",
+    "year": "{{ cookiecutter.now[:4] }}"
 }
