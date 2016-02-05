@@ -1,0 +1,9 @@
+DJANGO_DEBUG=True
+DJANGO_ADMIN_URL=admin
+#DJANGO_DATABASE_URL=
+#DJANGO_CACHE_URL=
+#DJANGO_SETTINGS_MODULE={{ cookiecutter.repo_name }}.settings.production
+DJANGO_SECRET_KEY=kh-2ucui!mn4f(hsh=bwj#t@z6s4sx@(qpb0u8kbs0hc)2kmjp
+DJANGO_ALLOWED_HOSTS=.{{ cookiecutter.domain_name }}
+#DJANGO_SERVER_EMAIL=
+DJANGO_SECURE_SSL_REDIRECT=False
