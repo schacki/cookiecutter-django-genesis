@@ -1,3 +1,5 @@
+all: bootstrap virtualenv install migrate
+
 bootstrap:
 		mkdir -p var/log
 		mkdir -p var/www/static
