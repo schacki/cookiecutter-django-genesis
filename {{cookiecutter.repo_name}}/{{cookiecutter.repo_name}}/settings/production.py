@@ -1,2 +1,4 @@
 # -*- coding: utf-8 -*-
-from .common import *
+from ._production import *
+
+# Add your project specific settings below
