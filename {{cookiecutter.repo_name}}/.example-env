@@ -1,9 +1,26 @@
-DJANGO_DEBUG=True
-DJANGO_ADMIN_URL=admin
-#DJANGO_DATABASE_URL=
 #DJANGO_CACHE_URL=
 #DJANGO_SETTINGS_MODULE={{ cookiecutter.repo_name }}.settings.production
 DJANGO_SECRET_KEY=kh-2ucui!mn4f(hsh=bwj#t@z6s4sx@(qpb0u8kbs0hc)2kmjp
-DJANGO_ALLOWED_HOSTS=.{{ cookiecutter.domain_name }}
+#DJANGO_ALLOWED_HOSTS=.{{ cookiecutter.domain_name }}
 #DJANGO_SERVER_EMAIL=
-DJANGO_SECURE_SSL_REDIRECT=False
+#DJANGO_SECURE_SSL_REDIRECT=False
+#DJANGO_ADMIN_URL=admin
+#DJANGO_DEFAULT_CACHE
+#DJANGO_EMAIL_BACKEND
+#DJANGO_DEBUG=True
+{% if cookiecutter.dev_database == 'postgres' or  cookiecutter.prod_database == 'postgres' %}
+# Please uncomment the following line and replace USER, PASSWORD, HOST, PORT and NAME with the correct values
+#DJANGO_DATABASE_URL=postgres://USER:PASSWORD@HOST:PORT/NAME
+{%- endif %}
+{% if cookiecutter.dev_database == 'mysql' or cookiecutter.prod_database == 'mysql' %}
+# Please uncomment the following line and replace USER, PASSWORD, HOST, PORT and NAME with the correct values
+#DJANGO_DATABASE_URL=mysql://USER:PASSWORD@HOST:PORT/NAME
+{%- endif %}
+#DJANGO_ETC_DIR
+#DJANGO_ENV_FILE_PATH
+#DJANGO_VAR_DIR
+#DJANGO_DB_FILE_PATH
+#DJANGO_STATIC_ROOT_DIR
+#DJANGO_MEDIA_ROOT_DIR
+#DJANGO_DEBUG_LOG_FILE_PATH
+#DJANGO_ERROR_LOG_FILE_PATH

@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
-from. _test import *
+from .common import *
+
+
 
 # Add your project specific settings below

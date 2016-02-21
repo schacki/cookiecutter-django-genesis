@@ -11,56 +11,15 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.9/ref/settings/
 """
 
-import environ, logging, os
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-logger.addHandler(logging.StreamHandler())
-
-env = environ.Env()
-
-# ROOT_DIR is the the top project directory
-ROOT_DIR = environ.Path(__file__) - 3
-logger.info('ROOT_DIR is: {}'.format(ROOT_DIR))
-logger.info(str(ROOT_DIR))
-
-# ETC_DIR contains any relevant configuration data and files
-ETC_DIR = env(
-    'DJANGO_ETC_DIR',
-    default=str(ROOT_DIR.path('etc'))
-)
-logger.info('ETC_DIR is: {}'.format(ETC_DIR))
-
-# ENV_FILE_PATH is a .env file that might contain configuration data for Django that might overrid the defaults
-# specified in this settings file.
-ENV_FILE_PATH = env(
-    'DJANGO_ENV_FILE_PATH',
-    default=str(environ.Path(ETC_DIR).path('.{{ cookiecutter.repo_name }}-env',))
-)
-logger.info('ENV_FILE_PATH is: {}'.format(ENV_FILE_PATH))
-
-# Read the the specified .evn file to activate any of the  specified configurations.
-environ.Env.read_env(ENV_FILE_PATH)
-
-
-# VAR_DIR contains variable data like meda, static, database etc.
-VAR_DIR = env(
-    'DJANGO_VAR_DIR',
-    default=str(ROOT_DIR.path('var'))
-)
-logger.info('VAR_DIR is: {}'.format(VAR_DIR))
-
-
-DB_FILE_PATH = env(
-    'DJANGO_DB_FILE_PATH',
-    default=str(environ.Path(VAR_DIR).path('db.sqlite3'))
-)
-logger.info('DB_FILE_PATH is: {}'.format(DB_FILE_PATH))
+# This will prepare and load the environment variable. However, it will only have
+# any effect, if prepare hast not been called yet (either by manage.py or wsgi.py)
+from .. import prepare, env
+prepare()
 
 
 #TODO: secret key
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'fe$t!yn)82*51555a54bbqqedl_rpnkt$pur4rl-d589k(2p8_'
+SECRET_KEY = env('DJANGO_SECRET_KEY')
 
 
 # DEBUG
@@ -69,33 +28,37 @@ SECRET_KEY = 'fe$t!yn)82*51555a54bbqqedl_rpnkt$pur4rl-d589k(2p8_'
 DEBUG = env.bool("DJANGO_DEBUG", True)
 
 
-# EMAIL CONFIGURATION
-# ------------------------------------------------------------------------------
-EMAIL_BACKEND = env('DJANGO_EMAIL_BACKEND', default='django.core.mail.backends.smtp.EmailBackend')
-
-
-# MANAGER CONFIGURATION
-# ------------------------------------------------------------------------------
-# See: https://docs.djangoproject.com/en/dev/ref/settings/#admins
-ADMINS = (
-    ('Juergen Schackmann', 'juergen.schackmann@{{ cookiecutter.domain_name }}.de'),
-)
-
-
 ALLOWED_HOSTS = []
 
-
-# Application definition
-
-INSTALLED_APPS = [
-    'django.contrib.admin',
+# APP CONFIGURATION
+# ------------------------------------------------------------------------------
+DJANGO_APPS = (
+    # Default Django apps:
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
+    'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    '{{ cookiecutter.repo_name }}'
-]
+
+    # Useful template tags:
+    # 'django.contrib.humanize',
+
+    # Admin
+    'django.contrib.admin',
+)
+THIRD_PARTY_APPS = (
+)
+
+# Apps specific for this project go here.
+LOCAL_APPS = (
+)
+
+
+# See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
+INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
+
+
 
 MIDDLEWARE_CLASSES = [
     'django.middleware.security.SecurityMiddleware',
@@ -108,76 +71,9 @@ MIDDLEWARE_CLASSES = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-
-
-TEMPLATES = [
-    {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-            ],
-        },
-    },
-]
-
-
-# Database
-# https://docs.djangoproject.com/en/1.9/ref/settings/#databases
-
-DATABASES = {
-    'default': env.db(
-        "DJANGO_DATABASE_URL",
-        default="sqlite:///{}".format(DB_FILE_PATH)
-    ),
-}
-DATABASES['default']['ATOMIC_REQUESTS'] = True
-
-# See: https://docs.djangoproject.com/en/dev/ref/settings/#language-code
-LANGUAGE_CODE = 'de'
-
-# See: https://docs.djangoproject.com/en/dev/ref/settings/#site-id
-SITE_ID = 1
-
-# See: https://docs.djangoproject.com/en/dev/ref/settings/#use-i18n
-USE_I18N = True
-
-# See: https://docs.djangoproject.com/en/dev/ref/settings/#use-l10n
-USE_L10N = True
-
-# See: https://docs.djangoproject.com/en/dev/ref/settings/#use-tz
-USE_TZ = True
-
-# GENERAL CONFIGURATION
+# URL Configuration
 # ------------------------------------------------------------------------------
-# Local time zone for this installation. Choices can be found here:
-# http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
-# although not all choices may be available on all operating systems.
-# In a Windows environment this must be set to your system time zone.
-TIME_ZONE = 'UTC'
-
-# Password validation
-# https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
-
-AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
-]
+ROOT_URLCONF = '{{ cookiecutter.repo_name }}.urls'
 
 
 # TEMPLATE CONFIGURATION
@@ -212,18 +108,97 @@ TEMPLATES = [
     },
 ]
 
+
+# See: https://docs.djangoproject.com/en/dev/ref/settings/#wsgi-application
+WSGI_APPLICATION = '{{ cookiecutter.repo_name }}.wsgi.application'
+
+# Database
+# https://docs.djangoproject.com/en/1.9/ref/settings/#databases
+
+DATABASES = {
+    'default': env.db(
+        "DJANGO_DATABASE_URL",
+        default="sqlite:///{}".format(env('DJANGO_DB_FILE_PATH'))
+    ),
+}
+DATABASES['default']['ATOMIC_REQUESTS'] = True
+
+
+# Password validation
+# https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
+
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
+]
+
+# EMAIL CONFIGURATION
+# ------------------------------------------------------------------------------
+EMAIL_BACKEND = env('DJANGO_EMAIL_BACKEND', default='django.core.mail.backends.smtp.EmailBackend')
+
+
+# MANAGER CONFIGURATION
+# ------------------------------------------------------------------------------
+# See: https://docs.djangoproject.com/en/dev/ref/settings/#admins
+ADMINS = (
+    ('Juergen Schackmann', 'juergen.schackmann@{{ cookiecutter.domain_name }}.de'),
+)
+
+
+# See: https://docs.djangoproject.com/en/dev/ref/settings/#site-id
+SITE_ID = 1
+
+
+
+
+# Internationalization
+# https://docs.djangoproject.com/en/1.9/topics/i18n/
+
+# See: https://docs.djangoproject.com/en/dev/ref/settings/#language-code
+LANGUAGE_CODE = 'de'
+
+
+# Local time zone for this installation. Choices can be found here:
+# http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
+# although not all choices may be available on all operating systems.
+# In a Windows environment this must be set to your system time zone.
+TIME_ZONE = '{{ cookiecutter.timezone }}'
+
+
+# See: https://docs.djangoproject.com/en/dev/ref/settings/#use-i18n
+USE_I18N = True
+
+# See: https://docs.djangoproject.com/en/dev/ref/settings/#use-l10n
+USE_L10N = True
+
+# See: https://docs.djangoproject.com/en/dev/ref/settings/#use-tz
+USE_TZ = True
+
+
+
+
 # STATIC FILE CONFIGURATION
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/1.9/howto/static-files/
 # ------------------------------------------------------------------------------
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#static-root
-STATIC_ROOT = str(environ.Path(VAR_DIR).path('www/static'))
+STATIC_ROOT = env('DJANGO_STATIC_ROOT')
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#static-url
 STATIC_URL = '/static/'
 
 # See: https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#std:setting-STATICFILES_DIRS
-STATICFILES_DIRS = (
-    str(ROOT_DIR.path('bower_components')),
-)
+STATICFILES_DIRS = env.list('DJANGO_STATICFILES_DIRS')
 
 # See: https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#staticfiles-finders
 STATICFILES_FINDERS = (
@@ -235,18 +210,15 @@ STATICFILES_FINDERS = (
 # MEDIA CONFIGURATION
 # ------------------------------------------------------------------------------
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#media-root
-MEDIA_ROOT = str(environ.Path(VAR_DIR).path('www/media'))
+MEDIA_ROOT = env('DJANGO_MEDIA_ROOT')
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#media-url
 MEDIA_URL = '/media/'
 
 
-# URL Configuration
-# ------------------------------------------------------------------------------
-ROOT_URLCONF = '{{ cookiecutter.repo_name }}.urls'
 
-# See: https://docs.djangoproject.com/en/dev/ref/settings/#wsgi-application
-WSGI_APPLICATION = '{{ cookiecutter.repo_name }}.wsgi.application'
+
+
 
 
 # CACHING
@@ -287,7 +259,7 @@ LOGGING = {
             'class': 'logging.handlers.TimedRotatingFileHandler',
             'filters': ['require_debug_false'],
             'formatter': 'verbose',
-            'filename': env('DJANGO_DEBUG_LOG', default='{}/{}'.format(str(environ.Path(VAR_DIR).path('log')), '{{ cookiecutter.repo_name }}-django-debug.log')),
+            'filename': env('DJANGO_DEBUG_LOG_FILE_PATH'),
             'interval': 6
         },
         'error_file': {
@@ -295,7 +267,7 @@ LOGGING = {
             'class': 'logging.handlers.TimedRotatingFileHandler',
             'filters': ['require_debug_false'],
             'formatter': 'verbose',
-            'filename': env('DJANGO_ERROR_LOG', default='{}/{}'.format(str(environ.Path(VAR_DIR).path('log')), '{{ cookiecutter.repo_name }}-django-error.log')),
+            'filename': env('DJANGO_ERROR_LOG_FILE_PATH'),
             'interval': 6
         },
         'mail_admins': {
@@ -327,3 +299,7 @@ LOGGING = {
     },
     'version': 1
 }
+
+
+# Custom Admin URL, use {% raw %}{% url 'admin:index' %}{% endraw %}
+ADMIN_URL = env('DJANGO_ADMIN_URL', default='admin')

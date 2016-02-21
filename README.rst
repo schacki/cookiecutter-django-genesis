@@ -19,7 +19,9 @@ Optional Integrations
 
 Constraints
 -----------
-
+* For Django 1.9
+* Python 3
+* Not Windows
 
 
 Usage
